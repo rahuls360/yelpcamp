@@ -15,14 +15,15 @@
         <strong>
           <%= comment.content %>
         </strong> -
-        <%= comment.author %>
+        <%= comment.author.username %>
       </p>
-      <a href="/campgrounds/<%= campground._id %>/edit" class="btn btn-warning">Edit Campground</a>
-      <form action="/campgrounds/<%= campground._id %>?_method=DELETE" method="POST">
-        <input type="submit" value="Delete Campground" class="btn btn-danger">
-      </form>
-      <a href="/campgrounds/<%=campground._id %>/comments/new">Leave a comment</a>
+      <%  }); %>
+        <a href="/campgrounds/<%= campground._id %>/edit" class="btn btn-warning">Edit Campground</a>
+        <form action="/campgrounds/<%= campground._id %>?_method=DELETE" method="POST">
+          <input type="submit" value="Delete Campground" class="btn btn-danger">
+        </form>
+        <a href="/campgrounds/<%=campground._id %>/comments/new">Leave a comment</a>
     </div>
-    <%  }); %>
 
-      <% include partials/footer  %>
+
+    <% include partials/footer  %>

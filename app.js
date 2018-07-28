@@ -12,13 +12,14 @@ const passportLocalMongoose = require('passport-local-mongoose');
 const expressSession = require('express-session');
 const User = require('./models/user');
 const methodOverride = require('method-override');
+const flash = require('connect-flash');
 
 //Require routes
 const authRoute = require('./routes/auth');
 const commentRoute = require('./routes/comment');
 const indexRoute = require('./routes/index');
 
-seedDB();
+// seedDB();
 
 app.set('view engine', 'ejs');
 
@@ -27,6 +28,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use(methodOverride('_method'));
+app.use(flash());
 
 //PASSPORT CONFIGURATION
 app.use(expressSession({
@@ -42,8 +44,12 @@ passport.deserializeUser(User.deserializeUser());
 
 app.use(function (req, res, next) {
   res.locals.newUser = req.user;
+  res.locals.error = req.flash('error');
+  res.locals.success = req.flash('success');
   next();
 });
+
+
 
 app.use(authRoute);
 app.use("/campgrounds/:id/comments", commentRoute);

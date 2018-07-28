@@ -3,7 +3,7 @@ const Campground = require('../models/campground');
 const router = express.Router({
   mergeParams: true
 });
-
+const middleware = require('../middleware');
 //Index route
 router.get('/', (req, res) => {
   Campground.find({}, function (err, obj) {
@@ -22,25 +22,33 @@ router.get('/', (req, res) => {
 });
 
 //new route
-router.get('/new', isLoggedIn, (req, res) => {
+router.get('/new', middleware.isLoggedIn, (req, res) => {
   res.render('new');
 });
 
 //create route
-router.post('/', isLoggedIn, (req, res) => {
+router.post('/', middleware.isLoggedIn, (req, res) => {
   let body = req.body;
+  let author = {
+    id: req.user._id,
+    username: req.user.username
+  }
   Campground.create({
     name: req.user.username,
     image: req.body.img,
-    description: req.body.description
+    description: req.body.description,
+    author: author
   }, function (err, newlyAddedCampground) {
     if (err) {
       console.log(err);
+      req.flash("error", "Failed to create campground");
+      res.redirect("/");
     } else {
+      req.flash("success", "Successfully added campground");
       console.log("Added successfully");
+      res.redirect('/campgrounds');
     }
   });
-  res.redirect('/campgrounds')
 });
 
 //show route
@@ -57,7 +65,7 @@ router.get('/:id', (req, res) => {
   });
 });
 
-router.get('/:id/edit', isLoggedIn, (req, res) => {
+router.get('/:id/edit', middleware.checkUserAuthorization, (req, res) => {
   Campground.findById(req.params.id, function (err, foundId) {
     if (err) {
       console.log(err);
@@ -84,7 +92,7 @@ router.put('/:id', (req, res) => {
   })
 });
 
-router.delete('/:id', isLoggedIn, (req, res) => {
+router.delete('/:id', middleware.checkUserAuthorization, (req, res) => {
   Campground.findOneAndRemove(req.params.id, function (err) {
     if (err) {
       console.log(err);
@@ -94,18 +102,8 @@ router.delete('/:id', isLoggedIn, (req, res) => {
   })
 });
 
-function isLoggedIn(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect('/login');
-}
 
-// function checkUserAuthorization(req, res, next){
-//   Campground.findById(req.params.id, function(err, foundId){
-//     console.log(req.user._id);
-//     console.log();
-//   });
-// }
+
+
 
 module.exports = router;
