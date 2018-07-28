@@ -56,7 +56,7 @@ app.use("/campgrounds/:id/comments", commentRoute);
 app.use("/campgrounds", indexRoute);
 
 //Connect to DB
-mongoose.connect(process.env.DATABASENAME);
+mongoose.connect("process.env.DATABASENAME");
 
 //Homepage route
 app.get('/', (req, res) => {
@@ -64,6 +64,6 @@ app.get('/', (req, res) => {
   res.render('landing-page');
 });
 
-app.listen(3000, function () {
+app.listen(process.env.PORT, process.env.IP, function () {
   console.log('Listening');
 });
