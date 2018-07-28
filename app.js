@@ -56,7 +56,7 @@ app.use("/campgrounds/:id/comments", commentRoute);
 app.use("/campgrounds", indexRoute);
 
 //Connect to DB
-mongoose.connect('mongodb://localhost:27017/yelp_camp');
+mongoose.connect(process.env.DATABASENAME);
 
 //Homepage route
 app.get('/', (req, res) => {
